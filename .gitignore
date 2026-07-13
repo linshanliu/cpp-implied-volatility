@@ -1,1 +1,24 @@
+# Visual Studio
 .vs/
+
+# Build directories
+x64/
+Debug/
+Release/
+
+# Intermediate build files
+*.obj
+*.exe
+*.pdb
+*.ilk
+*.idb
+*.tlog
+*.log
+
+# IntelliSense
+*.ipch
+*.VC.db
+*.VC.opendb
+
+# User settings
+*.suo

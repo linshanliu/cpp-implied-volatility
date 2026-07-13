@@ -1,12 +1,3 @@
-
-
-//输入网络上的期权数据
-// 计算Implied volatility
-//       BS 模型的反函数
-// 然后看一下是否有 volatility smile/skew
-// calibration Heston model
-// 对新的期权生成价格
-
 #include "EuropeanOption.hpp"
 #include "UtilityFunctions.hpp"
 #include "SPYOptionData.hpp"
