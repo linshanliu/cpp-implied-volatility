@@ -139,17 +139,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ChF.hpp" />
-    <ClCompile Include="COSPricer.cpp" />
+    <ClCompile Include="CSVReader.cpp" />
+    <ClCompile Include="DataCleaner.cpp" />
     <ClCompile Include="EuropeanOption.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="UtilityFunctions.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="COSPricer.hpp" />
+    <ClInclude Include="CSVReader.hpp" />
+    <ClInclude Include="DataCleaner.hpp" />
     <ClInclude Include="EuropeanOption.hpp" />
-    <ClInclude Include="SPYOptionData.hpp" />
-    <ClInclude Include="UtilityFunctions.hpp" />
+    <ClInclude Include="OptionQuote.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

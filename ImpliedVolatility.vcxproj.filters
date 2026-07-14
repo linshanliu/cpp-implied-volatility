@@ -21,27 +21,24 @@
     <ClCompile Include="EuropeanOption.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="UtilityFunctions.cpp">
+    <ClCompile Include="CSVReader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="COSPricer.cpp">
+    <ClCompile Include="DataCleaner.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ChF.hpp">
-      <Filter>Header Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EuropeanOption.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="UtilityFunctions.hpp">
+    <ClInclude Include="CSVReader.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SPYOptionData.hpp">
+    <ClInclude Include="OptionQuote.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="COSPricer.hpp">
+    <ClInclude Include="DataCleaner.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

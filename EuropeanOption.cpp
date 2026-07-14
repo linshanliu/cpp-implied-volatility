@@ -2,6 +2,8 @@
 #include <cmath>
 #include<iostream>
 
+using namespace std;
+
 double normal_cdf(double x)
 {
 	return 0.5 * (1.0 + erf(x / sqrt(2.0)));
@@ -14,55 +16,103 @@ double normal_pdf(double x)
 }
 
 
-/// <summary>
-/// 
-/// </summary>
 
-EuropeanOption::EuropeanOption():K(100),T(1),r(0.0375), S0(100), sigma(0.2), call_put(1){}
+EuropeanOption::EuropeanOption():K_(100),T_(1), isCall_(true){}
 
-EuropeanOption::EuropeanOption(double K_in, double T_in, double r_in, double S0_in, double sigma_in, bool call_put_in):K(K_in), T(T_in), r(r_in), S0(S0_in), sigma(sigma_in), call_put(call_put_in) {}
+EuropeanOption::EuropeanOption(double K, double T, bool isCall):K_(K), T_(T), isCall_(isCall) {}
 
-EuropeanOption::EuropeanOption(const EuropeanOption& source) :S0(source.S0), K(source.K), r(source.r), sigma(source.sigma), T(source.T),call_put(source.call_put){}
+EuropeanOption::EuropeanOption(const EuropeanOption& source) : K_(source.K_), T_(source.T_),isCall_(source.isCall_){}
 
 EuropeanOption::~EuropeanOption() {}
 
 
-double EuropeanOption::BS_Price() const
+double EuropeanOption::BS_Price(double S0, double r, double sigma, double q) const
 {
-	double d1 = (std::log(S0 / K) + (r + sigma * sigma / 2) * T) / (sigma * std::sqrt(T));
-	double d2 = (std::log(S0 / K) + (r - sigma * sigma / 2) * T) / (sigma * std::sqrt(T));
-	if (call_put == 1)
+	double d1 = (log(S0 / K_) + (r - q + sigma * sigma / 2) * T_) / (sigma * sqrt(T_));
+	double d2 = d1 - sigma * sqrt(T_);
+	if (isCall_ == 1)
 	{
-		return S0 * normal_cdf(d1) - K * std::exp(-r * T) * normal_cdf(d2);
+		return S0 * exp(-q * T_) * normal_cdf(d1) - K_ * exp(-r * T_) * normal_cdf(d2);
 	}
 	else
 	{
-		return -S0 * normal_cdf(-d1) + K * std::exp(-r * T) * normal_cdf(-d2);
+		return -S0 * exp(-q * T_) * normal_cdf(-d1) + K_ * exp(-r * T_) * normal_cdf(-d2);
 	}
 }
 
 
 
 
-double EuropeanOption::Vega() const
+double EuropeanOption::Vega(double S0, double r, double sigma, double q) const
 {
-	double d1 = (std::log(S0 / K) + (r + sigma * sigma / 2) * T) / (sigma * std::sqrt(T));
-	return S0 * std::sqrt(T) * normal_pdf(d1);
+	double d1 = (log(S0 / K_) + (r - q + sigma * sigma / 2) * T_) / (sigma * sqrt(T_));
+	return S0 * exp(-q * T_) * sqrt(T_) * normal_pdf(d1);
 }
 
 
-void EuropeanOption::SetK(double K_in)
+void EuropeanOption::SetK(double K)
 {
-	K = K_in;
+	K_ = K;
 }
 
-void EuropeanOption::SetT(double T_in)
+void EuropeanOption::SetT(double T)
 {
-	T = T_in;
-}
-void EuropeanOption::SetSigma(double sigma_in)
-{
-	sigma = sigma_in;
+	T_ = T;
 }
 
 
+
+
+double EuropeanOption::ImpliedVolatility(double S0, double r, double q, double marketPrice, int maxIteration, double tol)
+{
+    double sigma = 0.4;
+
+    // TODO: Pass dividend yield q once EuropeanOption supports it.
+    /*EuropeanOption RefOption(K, T, r, S0, sigma, isCall);*/
+
+
+
+
+    for (int i = 0; i < maxIteration; i++)
+    {
+        double price = this -> BS_Price(S0,r,sigma,q);
+        double vega = this -> Vega(S0, r, sigma, q);
+
+
+        // Temporary debug output. Remove or disable after testing.
+        /*std::cout << "Iteration: " << i
+            << ", sigma: " << sigma
+            << ", price: " << price
+            << ", market price: " << marketPrice
+            << ", error: " << std::abs(price - marketPrice)
+            << ", vega: " << vega
+            << '\n';*/
+
+
+        if (std::abs(price - marketPrice) < tol)
+        {
+            return sigma;
+        }
+
+
+        // TODO: Re-enable this after handling failure properly.
+        if (std::abs(vega) < 1e-8)
+            break;
+
+
+        /*std::cout << RefOption.Vega();*/
+        sigma -= (price - marketPrice) / vega;
+
+
+        // Prevent negative volatility during Newton iterations.
+        sigma = std::max(sigma, 1e-6);
+
+    }
+
+
+    // TODO: Replace this temporary fallback with an exception
+    // or a structured convergence result.
+    throw std::runtime_error("Implied volatility failed to converge.");
+
+    return sigma;
+}

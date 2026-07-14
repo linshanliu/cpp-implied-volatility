@@ -4,25 +4,25 @@
 class EuropeanOption
 {
 private:
-	double K;
-	double T;
-	double r;
-	double S0;
-	double sigma;
-	bool call_put; // call_put ==1 if it is a call, else put
+	double K_;
+	double T_;
+	bool isCall_;
 
 public:
 	EuropeanOption();
-	EuropeanOption(double K_in, double T_in, double r_in, double S0_in, double sigma_in, bool call_put);
+	EuropeanOption(double K, double T, bool isCall);
 	EuropeanOption(const EuropeanOption& source);
 	~EuropeanOption();
 
-	double BS_Price() const;
-	double Vega() const;
 
-	void SetK(double K_in);
-	void SetT(double T_in);
-	void SetSigma(double sigma_in);
+
+	double BS_Price(double S0, double r, double sigma, double q = 0.0) const;
+	double Vega(double S0, double r, double sigma, double q = 0.0) const;
+
+	void SetK(double K);
+	void SetT(double T);
+
+	double ImpliedVolatility(double S0, double r, double q, double marketPrice, int maxIteration = 100, double tol = 1e-10);
 
 
 
