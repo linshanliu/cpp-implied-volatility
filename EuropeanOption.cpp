@@ -96,7 +96,7 @@ double EuropeanOption::ImpliedVolatility(double S0, double r, double q, double m
 
 
         // TODO: Re-enable this after handling failure properly.
-        if (std::abs(vega) < 1e-8)
+        if (std::abs(vega) < 1e-9)
             break;
 
 

@@ -8,7 +8,7 @@
 class DataCleaner
 {
 public:
-    static std::vector<OptionQuote> clean(const std::vector<OptionQuote>& quotes);
+    static std::vector<OptionQuote> clean(const std::vector<OptionQuote>& quotes, double S0);
 };
 
 #endif // !DATACLEANER_HPP

@@ -5,6 +5,10 @@
 #include <sstream>
 #include <stdexcept>
 #include <string>
+#include <ctime>
+
+using namespace std;
+
 
 namespace
 {
@@ -40,6 +44,25 @@ namespace
     {
         return text == "True" || text == "true" || text == "1";
     }
+}
+
+// Parse "YYYY-MM-DD" to std::tm
+std::tm parseDate(const std::string& dateStr) {
+    std::tm tm = {};
+    if (dateStr.size() == 10) {
+        tm.tm_year = std::stoi(dateStr.substr(0, 4)) - 1900;
+        tm.tm_mon = std::stoi(dateStr.substr(5, 2)) - 1;
+        tm.tm_mday = std::stoi(dateStr.substr(8, 2));
+    }
+    return tm;
+}
+
+// Calculate year fraction between two dates
+double yearFraction(const std::tm& from, const std::tm& to) {
+    std::time_t t_from = std::mktime(const_cast<std::tm*>(&from));
+    std::time_t t_to = std::mktime(const_cast<std::tm*>(&to));
+    double days = std::difftime(t_to, t_from) / (60 * 60 * 24);
+    return days / 365.0;
 }
 
 
@@ -104,6 +127,18 @@ std::vector<OptionQuote> CSVReader::readOptionQuotes(const std::string& filename
             quote.expiration,
             ','
         );
+
+        // After reading quote.expiration
+        std::tm today = {};
+        std::time_t t = std::time(nullptr);
+        localtime_s(&today, &t); // Windows-safe, use localtime_r on Linux
+
+        today.tm_mday -= 1;
+        mktime(&today);
+
+        std::tm expiry = parseDate(quote.expiration);
+        quote.maturity = yearFraction(today, expiry);
+
 
         // 5. strike
         std::getline(lineStream, field, ',');

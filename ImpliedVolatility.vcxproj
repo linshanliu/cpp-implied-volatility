@@ -140,15 +140,19 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CSVReader.cpp" />
+    <ClCompile Include="CSVWriter.cpp" />
     <ClCompile Include="DataCleaner.cpp" />
     <ClCompile Include="EuropeanOption.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="VolatilitySurface.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CSVReader.hpp" />
+    <ClInclude Include="CSVWriter.hpp" />
     <ClInclude Include="DataCleaner.hpp" />
     <ClInclude Include="EuropeanOption.hpp" />
     <ClInclude Include="OptionQuote.hpp" />
+    <ClInclude Include="VolatilitySurface.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

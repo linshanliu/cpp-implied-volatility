@@ -2,6 +2,8 @@
 #include "OptionQuote.hpp"
 #include "CSVReader.hpp"
 #include "DataCleaner.hpp"
+#include "CSVWriter.hpp"
+//#include "VolatilitySurface.hpp"
 #include <iostream>
 #include <vector>
 
@@ -110,7 +112,7 @@ int main()
 
 
 	//Step4=================================================================================================
-    try {
+    /*try {
         auto rawQuotes = CSVReader::readOptionQuotes(
             R"(.\SPCX_options_raw.csv)"
         );
@@ -131,7 +133,165 @@ int main()
     catch (const std::exception& error) {
         std::cerr << error.what() << '\n';
         return 1;
+    }*/
+
+	//Step5=================================================================================================
+    /*auto rawQuotes = CSVReader::readOptionQuotes(
+        R"(.\SPCX_options_raw.csv)"
+    );
+
+    auto cleanQuotes =
+    DataCleaner::clean(rawQuotes);
+
+    for (const auto& quote : cleanQuotes) {
+        std::cout
+            << "Symbol: " << quote.contractSymbol
+            << ", Type: " << (quote.isCall ? "Call" : "Put")
+            << ", Expiry: " << quote.expiration
+            << ", Strike: " << quote.strike
+            << ", Maturity: " << quote.maturity
+            << ", Bid: " << quote.bid
+            << ", Ask: " << quote.ask
+            << ", Mid: " << quote.mid
+            << ", Last: " << quote.lastPrice
+            << ", Volume: " << quote.volume
+            << ", OI: " << quote.openInterest
+            << ", YahooIV: " << quote.yahooIV
+            << ", CalcIV: " << quote.calculatedIV
+            << std::endl;
+    }*/
+
+
+	//Step6=================================================================================================
+
+    /*try
+    {
+        auto rawQuotes =
+            CSVReader::readOptionQuotes(
+                R"(.\SPCX_options_raw.csv)"
+            );
+
+        auto cleanQuotes =
+            DataCleaner::clean(rawQuotes);
+
+
+        double S0 = 139.0;
+        double r = 0.0375;
+        double q = 0;
+
+        for (auto& quote : cleanQuotes)
+        {
+			EuropeanOption option(quote.strike, quote.maturity, quote.isCall);
+            quote.calculatedIV =
+                option.ImpliedVolatility(
+                    S0,
+                    r,
+                    q,
+                    quote.mid
+                );
+        }
+
+        std::cout << "Finished successfully.\n";
+    }
+    catch (const std::exception& error)
+    {
+        std::cerr << error.what() << '\n';
+        return 1;
     }
 
+    return 0;*/
+
+
+    auto rawQuotes =
+    CSVReader::readOptionQuotes(
+        R"(.\SPCX_options_raw.csv)"
+    );
+
+    double S0 = 139.0;
+    double r = 0.0375;
+    double q = 0;
+
+    auto cleanQuotes =
+    DataCleaner::clean(rawQuotes,S0);
+
+
+    int count = 0;
+
+    for (auto& quote : cleanQuotes)
+    {
+        EuropeanOption option(quote.strike, quote.maturity, quote.isCall);
+        try {
+            quote.calculatedIV =
+                option.ImpliedVolatility(
+                    S0,
+                    r,
+                    q,
+                    quote.lastPrice
+                );
+        }
+        catch (const std::exception& ex) {
+            count++;
+            std::cerr << "IV failed for K=" << quote.strike
+                << ", T=" << quote.maturity
+                << ", mid=" << quote.mid
+                << ": " << ex.what() << std::endl;
+            quote.calculatedIV = NAN;
+        }
+    }
+
+	std::cout << count << " quotes failed to calculate IV." << std::endl;
+
+    std::vector<OptionQuote> finalQuotes;
+
+    for (auto& quote : cleanQuotes)
+    {
+        EuropeanOption option(quote.strike, quote.maturity, quote.isCall);
+        try {
+            quote.calculatedIV = option.ImpliedVolatility(S0, r, q, quote.mid);
+            finalQuotes.push_back(quote); // 只保留能收敛的
+        }
+        catch (const std::exception& ex) {
+            // 不收敛的直接跳过
+        }
+    }
+
+    std::cout << "Final option quotes with valid IV: " << finalQuotes.size() << std::endl;
+
+    //Step7=========================================================================================================
+    CSVWriter::WriteOptionQuotes(
+        finalQuotes,
+        "SPCX_options_IV.csv"
+    );
+
+
+    /*VolatilitySurface surface(finalQuotes);
+
+    try
+    {
+        const double strike = 145.0;
+        const double maturity = 0.30;
+
+        const double interpolatedVol =
+            surface.GetVol(
+                strike,
+                maturity
+            );
+
+        std::cout
+            << "Interpolated volatility at K="
+            << strike
+            << ", T="
+            << maturity
+            << " is "
+            << interpolatedVol
+            << '\n';
+    }
+    catch (const std::exception& error)
+    {
+        std::cerr
+            << "Surface query failed: "
+            << error.what()
+            << '\n';
+    }*/
     
 }
