@@ -3,7 +3,7 @@
 #include "CSVReader.hpp"
 #include "DataCleaner.hpp"
 #include "CSVWriter.hpp"
-//#include "VolatilitySurface.hpp"
+#include "VolatilitySurface.hpp"
 #include <iostream>
 #include <vector>
 
@@ -264,7 +264,7 @@ int main()
     );
 
 
-    /*VolatilitySurface surface(finalQuotes);
+    VolatilitySurface surface(finalQuotes);
 
     try
     {
@@ -292,6 +292,6 @@ int main()
             << "Surface query failed: "
             << error.what()
             << '\n';
-    }*/
+    }
     
 }
