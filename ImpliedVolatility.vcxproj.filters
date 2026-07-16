@@ -33,6 +33,12 @@
     <ClCompile Include="VolatilitySurface.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="mainSVI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVISlice.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EuropeanOption.hpp">
@@ -51,6 +57,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="VolatilitySurface.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVISlice.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

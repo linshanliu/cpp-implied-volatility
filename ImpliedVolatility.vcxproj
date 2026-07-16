@@ -143,7 +143,14 @@
     <ClCompile Include="CSVWriter.cpp" />
     <ClCompile Include="DataCleaner.cpp" />
     <ClCompile Include="EuropeanOption.cpp" />
-    <ClCompile Include="main.cpp" />
+    <ClCompile Include="main.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="mainSVI.cpp" />
+    <ClCompile Include="SVISlice.cpp" />
     <ClCompile Include="VolatilitySurface.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -152,6 +159,7 @@
     <ClInclude Include="DataCleaner.hpp" />
     <ClInclude Include="EuropeanOption.hpp" />
     <ClInclude Include="OptionQuote.hpp" />
+    <ClInclude Include="SVISlice.hpp" />
     <ClInclude Include="VolatilitySurface.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

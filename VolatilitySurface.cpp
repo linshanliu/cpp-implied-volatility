@@ -47,44 +47,7 @@ VolatilitySurface::VolatilitySurface(const std::vector<OptionQuote>& quotes)
 
 
 
-    /*for (auto& [maturity, smile] : smiles_)
-    {
-        std::sort(
-            smile.begin(),
-            smile.end(),
-            [](const SmilePoint& lhs,
-                const SmilePoint& rhs)
-            {
-                return lhs.strike < rhs.strike;
-            }
-        );
-
-        std::vector<SmilePoint> uniqueSmile;
-        uniqueSmile.reserve(smile.size());
-
-        for (const auto& point : smile)
-        {
-            if (!uniqueSmile.empty() &&
-                std::abs(
-                    uniqueSmile.back().strike -
-                    point.strike
-                ) < 1e-12)
-            {
-                uniqueSmile.back().impliedVol =
-                    0.5 *
-                    (
-                        uniqueSmile.back().impliedVol +
-                        point.impliedVol
-                        );
-            }
-            else
-            {
-                uniqueSmile.push_back(point);
-            }
-        }
-
-        smile = std::move(uniqueSmile);
-    }*/
+    
     for (auto& entry : smiles_)
     {
         std::vector<SmilePoint>& smile = entry.second;
