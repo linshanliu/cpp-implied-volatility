@@ -8,10 +8,8 @@
 #include <cmath>
 #include <iomanip>
 
-// --- Minimal CSV loader, just for this test. ---------------------------
-// Expected columns: Strike,Maturity,Mid,IsCall,IV
-// Swap this out for your own CSVReader if you already have one that fills
-// a std::vector<OptionQuote>.
+
+
 static std::vector<OptionQuote> LoadQuotes(const std::string& path)
 {
     std::vector<OptionQuote> quotes;
