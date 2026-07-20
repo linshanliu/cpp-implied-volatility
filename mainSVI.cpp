@@ -12,6 +12,7 @@
 
 static std::vector<OptionQuote> LoadQuotes(const std::string& path)
 {
+	// Load option quotes from a CSV file.
     std::vector<OptionQuote> quotes;
     std::ifstream file(path);
     if (!file.is_open())
@@ -19,6 +20,7 @@ static std::vector<OptionQuote> LoadQuotes(const std::string& path)
 
     std::string line;
     std::getline(file, line); // skip header
+
 
     while (std::getline(file, line))
     {
@@ -44,7 +46,11 @@ static std::vector<OptionQuote> LoadQuotes(const std::string& path)
 // arbitrage in the raw quotes.
 static std::map<double, double> EstimateForwards(const std::vector<OptionQuote>& quotes)
 {
-    std::map<double, std::vector<std::pair<double, double> > > calls, puts; // T -> (K, mid)
+	// Create maps of calls and puts, keyed by maturity, each containing a vector of (strike, mid) pairs.
+    std::map<double, std::vector<std::pair<double, double> > > calls, puts;
+
+
+	// Separate the quotes into calls and puts, grouped by maturity.
     for (size_t i = 0; i < quotes.size(); ++i)
     {
         const OptionQuote& q = quotes[i];
@@ -52,27 +58,44 @@ static std::map<double, double> EstimateForwards(const std::vector<OptionQuote>&
         else          puts[q.maturity].push_back(std::make_pair(q.strike, q.mid));
     }
 
+	// pair of maturity and estimated forward price.
     std::map<double, double> forwards;
-    for (std::map<double, std::vector<std::pair<double, double> > >::const_iterator ct = calls.begin();
-        ct != calls.end(); ++ct)
+
+	// loop over maturities.
+	// ::const_const_iterator is the iterator type for a const map, which allows us to read the keys and values without modifying the map.
+    for (std::map<double, std::vector<std::pair<double, double> > >::const_iterator ct = calls.begin(); ct != calls.end(); ++ct)
     {
+		// Get the maturity T for this set of calls.
         const double T = ct->first;
+
+		// Get the list of (strike, mid) pairs for calls at this maturity.
         const std::vector<std::pair<double, double> >& callList = ct->second;
 
+
+		// Find the corresponding list of puts at the same maturity.
         std::map<double, std::vector<std::pair<double, double> > >::const_iterator pt = puts.find(T);
+
+        //If there are no puts for this maturity, skip to the next maturity.
         if (pt == puts.end()) continue;
+
+		// Get the list of (strike, mid) pairs for puts at this maturity.
         const std::vector<std::pair<double, double> >& putList = pt->second;
+
 
         double sum = 0.0;
         int n = 0;
         for (size_t i = 0; i < callList.size(); ++i)
         {
+			// For each call, get its strike Kc and mid price Cc.
             const double Kc = callList[i].first, Cc = callList[i].second;
+
+
             for (size_t j = 0; j < putList.size(); ++j)
             {
                 const double Kp = putList[j].first, Pp = putList[j].second;
                 if (std::abs(Kc - Kp) < 1e-9)
                 {
+					// If the strikes match, use put-call parity to estimate the forward price: F = C - P + K. (Interest rate = 0???)
                     sum += (Cc - Pp + Kc);
                     ++n;
                 }

@@ -5,7 +5,8 @@
 #include <functional>
 #include "OptionQuote.hpp"
 
-// Raw SVI parameters for a single maturity slice (Gatheral, 2004):
+//Gatheral, J. (2006).The Volatility Surface : A Practitioner's Guide. Wiley. 
+//Gatheral, J.& Jacquier, A. (2014). "Arbitrage-free SVI volatility surfaces." Quantitative Finance, 14(1).
 //
 //   w(k) = a + b * ( rho*(k - m) + sqrt((k - m)^2 + sigma^2) )
 //
